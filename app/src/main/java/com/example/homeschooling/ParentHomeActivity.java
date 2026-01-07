@@ -17,7 +17,7 @@ public class ParentHomeActivity extends AppCompatActivity {
 
     TextView tvUserName, tvUserRole;
     ImageView btnLogout, btnNotification;
- 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
