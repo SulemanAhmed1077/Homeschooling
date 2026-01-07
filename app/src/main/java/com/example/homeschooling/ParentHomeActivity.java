@@ -33,11 +33,18 @@ public class ParentHomeActivity extends AppCompatActivity {
         btnLogout = findViewById(R.id.btnLogout);
         btnNotification = findViewById(R.id.btnNotification);
 
-        // --- SET USER DATA ---
+        // --- SET USER DATA (UPDATED LOGIC) ---
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("USER_NAME")) {
             String name = intent.getStringExtra("USER_NAME");
-            tvUserName.setText(name);
+
+            // Yahan hum "Welcome" + Naam concatenate kar rahe hain
+            if (name != null && !name.isEmpty()) {
+                tvUserName.setText("Welcome, " + name);
+            } else {
+                tvUserName.setText("Welcome");
+            }
+
             tvUserRole.setText("Parent Account");
         }
 

@@ -164,17 +164,21 @@ public class LoginActivity extends AppCompatActivity {
             }
             else if (email.equals(PARENT_EMAIL) && password.equals(PARENT_PASSWORD)) {
                 Toast.makeText(LoginActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();
+
+                // Parent Login Logic
                 Intent intent = new Intent(LoginActivity.this, ParentHomeActivity.class);
-                // Naam bheja ja raha hai Parent ko
-                intent.putExtra("USER_NAME", "Ali");
+                intent.putExtra("USER_NAME", "Ali"); // Name bheja ja raha hai
+                intent.putExtra("USER_ROLE", "Parent Account");
                 startActivity(intent);
                 finish();
             }
             else if (email.equals(TUTOR_EMAIL) && password.equals(TUTOR_PASSWORD)) {
                 Toast.makeText(LoginActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();
+
+                // Tutor Login Logic
                 Intent intent = new Intent(LoginActivity.this, TutorHomeActivity.class);
-                // Naam bheja ja raha hai Tutor ko
-                intent.putExtra("USER_NAME", "Suleman");
+                intent.putExtra("USER_NAME", "Suleman"); // Name bheja ja raha hai
+                intent.putExtra("USER_ROLE", "Tutor Account");
                 startActivity(intent);
                 finish();
             }
