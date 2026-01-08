@@ -1,6 +1,7 @@
 package com.example.homeschooling;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -11,16 +12,16 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 
-import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class LoginActivity extends AppCompatActivity {
 
     // Views - Containers
     private LinearLayout loginContainer, signupContainer;
-    private TabLayout tabLayout;
 
     // Views - Login
     private TextInputEditText edtLoginEmail, edtLoginPassword;
@@ -29,8 +30,8 @@ public class LoginActivity extends AppCompatActivity {
     // Views - Signup
     private TextInputEditText edtName, edtSignupEmail, edtSignupPassword;
 
-    // Card Views
-    private CardView cardParent, cardTutor;
+    // Card Views (Changed to MaterialCardView for setStrokeColor support)
+    private MaterialCardView cardParent, cardTutor;
 
     // Radio Buttons
     private RadioButton rbParent, rbTutor;
@@ -52,10 +53,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Initialize Containers & Tabs
+        // Initialize Containers
         loginContainer = findViewById(R.id.loginContainer);
         signupContainer = findViewById(R.id.signupContainer);
-        tabLayout = findViewById(R.id.tabLayout);
+
+        // Initialize New Toggle Buttons (Replacing TabLayout)
+        MaterialButtonToggleGroup toggleGroup = findViewById(R.id.toggleGroup);
+        MaterialButton btnTabLogin = findViewById(R.id.btnTabLogin);
+        MaterialButton btnTabSignup = findViewById(R.id.btnTabSignup);
 
         // Initialize Login Views
         edtLoginEmail = findViewById(R.id.edtLoginEmail);
@@ -75,38 +80,33 @@ public class LoginActivity extends AppCompatActivity {
 
         btnSignup = findViewById(R.id.btnSignup);
 
-        // --- 1. TAB SWITCHING LOGIC ---
-        tabLayout.addTab(tabLayout.newTab().setText("Login"));
-        tabLayout.addTab(tabLayout.newTab().setText("Sign Up"));
+        // --- 1. TOGGLE BUTTON LOGIC (Replacing TabLayout) ---
+        // Initial state setup (Login selected by default)
+        selectTab(btnTabLogin, btnTabSignup, true);
 
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition() == 0) {
-                    loginContainer.setVisibility(View.VISIBLE);
-                    signupContainer.setVisibility(View.GONE);
-                } else {
-                    loginContainer.setVisibility(View.GONE);
-                    signupContainer.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {}
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {}
+        // Listener for Login Button
+        btnTabLogin.setOnClickListener(v -> {
+            selectTab(btnTabLogin, btnTabSignup, true);
+            loginContainer.setVisibility(View.VISIBLE);
+            signupContainer.setVisibility(View.GONE);
         });
 
-        // --- 2. CARD CLICK LOGIC ---
+        // Listener for Signup Button
+        btnTabSignup.setOnClickListener(v -> {
+            selectTab(btnTabLogin, btnTabSignup, false);
+            loginContainer.setVisibility(View.GONE);
+            signupContainer.setVisibility(View.VISIBLE);
+        });
+
+        // --- 2. CARD CLICK LOGIC (Visual Selection) ---
         cardParent.setOnClickListener(v -> {
             rbParent.setChecked(true);
-            rbTutor.setChecked(false);
+            updateCardSelection(true);
         });
 
         cardTutor.setOnClickListener(v -> {
             rbTutor.setChecked(true);
-            rbParent.setChecked(false);
+            updateCardSelection(false);
         });
 
         // --- 3. LOGIN BUTTON CLICK ---
@@ -150,13 +150,43 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    // Helper method to handle Button Toggle styling
+    private void selectTab(MaterialButton loginBtn, MaterialButton signupBtn, boolean isLoginSelected) {
+        if (isLoginSelected) {
+            // Highlight Login Button
+            loginBtn.setBackgroundColor(Color.parseColor("#2D3436"));
+            loginBtn.setTextColor(Color.WHITE);
+            // Reset Signup Button
+            signupBtn.setBackgroundColor(Color.parseColor("#FFFFFF"));
+            signupBtn.setTextColor(Color.parseColor("#636E72"));
+        } else {
+            // Highlight Signup Button
+            signupBtn.setBackgroundColor(Color.parseColor("#2D3436"));
+            signupBtn.setTextColor(Color.WHITE);
+            // Reset Login Button
+            loginBtn.setBackgroundColor(Color.parseColor("#FFFFFF"));
+            loginBtn.setTextColor(Color.parseColor("#636E72"));
+        }
+    }
+
+    // Helper method to update Card border color
+    private void updateCardSelection(boolean isParentSelected) {
+        if (isParentSelected) {
+            cardParent.setStrokeColor(Color.parseColor("#2D3436")); // Dark color selected
+            cardTutor.setStrokeColor(Color.parseColor("#DFE6E9"));   // Light color unselected
+        } else {
+            cardTutor.setStrokeColor(Color.parseColor("#2D3436"));   // Dark color selected
+            cardParent.setStrokeColor(Color.parseColor("#DFE6E9"));  // Light color unselected
+        }
+    }
+
     private void performLogin(String email, String password) {
         btnLogin.setEnabled(false);
         btnLogin.setText("Logging in...");
 
         new Handler().postDelayed(() -> {
             btnLogin.setEnabled(true);
-            btnLogin.setText("Login");
+            btnLogin.setText("Sign In"); // Reset button text
 
             if (email.equals(ADMIN_EMAIL) && password.equals(ADMIN_PASSWORD)) {
                 Toast.makeText(LoginActivity.this, "Admin Login: Dashboard Coming Soon", Toast.LENGTH_LONG).show();
@@ -167,7 +197,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 // Parent Login Logic
                 Intent intent = new Intent(LoginActivity.this, ParentHomeActivity.class);
-                intent.putExtra("USER_NAME", "Ali"); // Name bheja ja raha hai
+                intent.putExtra("USER_NAME", "Ali");
                 intent.putExtra("USER_ROLE", "Parent Account");
                 startActivity(intent);
                 finish();
@@ -177,7 +207,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 // Tutor Login Logic
                 Intent intent = new Intent(LoginActivity.this, TutorHomeActivity.class);
-                intent.putExtra("USER_NAME", "Suleman"); // Name bheja ja raha hai
+                intent.putExtra("USER_NAME", "Suleman");
                 intent.putExtra("USER_ROLE", "Tutor Account");
                 startActivity(intent);
                 finish();

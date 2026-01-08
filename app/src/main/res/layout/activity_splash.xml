@@ -1,36 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    android:gravity="center">
+    android:background="#F5F7FA">
 
-    <!-- Main Container: Image aur Text ko vertically stack karne ke liye -->
-    <LinearLayout
+    <!-- Background Decoration Circle -->
+    <View
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:background="#E3F2FD"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Main Card Container -->
+    <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center">
+        app:cardCornerRadius="24dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Aapki Graduate Image -->
-        <ImageView
-            android:layout_width="180dp"
-            android:layout_height="180dp"
-            android:src="@drawable/graduate"
-            android:contentDescription="App Logo"
-            android:scaleType="fitCenter" />
-
-        <!-- Text: Homeschooling -->
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Homeschooling"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:textColor="#000000"
-            android:letterSpacing="0.1"
-            android:layout_marginTop="16dp" />
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="40dp">
 
-    </LinearLayout>
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/graduate"
+                android:contentDescription="App Logo"
+                android:scaleType="fitCenter"
+                android:layout_marginBottom="24dp" />
 
-</RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Homeschooling"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:textColor="#2C3E50"
+                android:letterSpacing="0.05"
+                android:fontFamily="sans-serif-medium" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Learn without limits"
+                android:textSize="14sp"
+                android:textColor="#7F8C8D"
+                android:layout_marginTop="8dp" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
