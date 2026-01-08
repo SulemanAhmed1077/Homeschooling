@@ -36,7 +36,6 @@
                     android:orientation="vertical"
                     android:gravity="center_vertical">
 
-                    <!-- UPDATED HERE: Default text is now "Welcome" -->
                     <TextView
                         android:id="@+id/tvUserName"
                         android:layout_width="wrap_content"
@@ -104,48 +103,60 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- 2. Find Bar (Search) -->
+            <!-- 2. NEW SECTION: Post a Tuition Request (ID ADDED HERE) -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardPostRequest"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="#E0E0E0"
-                app:cardBackgroundColor="#FFFFFF"
-                android:layout_marginBottom="32dp"
+                app:strokeColor="#E3F2FD"
+                app:cardBackgroundColor="#E3F2FD"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="16dp">
+                    android:padding="20dp"
+                    android:gravity="center_vertical">
 
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@android:drawable/ic_menu_search"
-                        app:tint="#AAAAAA"
-                        android:layout_marginEnd="12dp"/>
-
-                    <TextView
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Find a Tutor..."
-                        android:textColor="#AAAAAA"
-                        android:textSize="16sp" />
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Post a Tuition Request"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="#1565C0"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Find the best tutor for your needs"
+                            android:textSize="13sp"
+                            android:textColor="#5472d3"
+                            android:layout_marginTop="4dp"/>
+                    </LinearLayout>
 
                     <TextView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:text="🔍"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:text="➜"
                         android:gravity="center"
-                        android:textSize="20sp" />
+                        android:textSize="24sp"
+                        android:textColor="#1565C0"
+                        android:background="@android:color/white"
+                        android:padding="5dp"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -249,7 +260,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="₹0"
+                            android:text="PKR 0"
                             android:textSize="22sp"
                             android:textStyle="bold"
                             android:textColor="#1A1A1A"
