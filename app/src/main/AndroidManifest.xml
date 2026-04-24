@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.homeschooling">
+    <!-- Internet Permission (For Maps, API, etc.) -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -10,38 +12,61 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Homeschooling">
+        <activity
+            android:name=".SearchTutorsActivity"
+            android:exported="false" />
 
-        <!-- Set SplashActivity as the Launcher Activity -->
         <activity
             android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- LoginActivity -->
         <activity
             android:name=".LoginActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:exported="true"/>
-
-        <!-- ParentHomeActivity -->
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ParentHomeActivity"
-            android:exported="true"/>
-
-        <!-- TutorHomeActivity -->
+            android:exported="true" />
         <activity
             android:name=".TutorHomeActivity"
-            android:exported="true"/>
-
-        <!-- ProfileActivity -->
+            android:exported="true" /> <!-- ProfileActivity -->
         <activity
             android:name=".ProfileActivity"
-            android:exported="true"/>
-
+            android:exported="true" /> <!-- RequestsListActivity -->
+        <activity
+            android:name=".RequestsListActivity"
+            android:exported="true" /> <!-- ParentRequestsActivity -->
+        <activity
+            android:name=".ParentRequestsActivity"
+            android:exported="true" /> <!-- AttendanceActivity -->
+        <activity
+            android:name=".AttendanceActivity"
+            android:exported="true" /> <!-- AttendanceHistoryActivity -->
+        <activity
+            android:name=".AttendanceHistoryActivity"
+            android:exported="true" /> <!-- PaymentActivity -->
+        <activity
+            android:name=".PaymentActivity"
+            android:exported="true" />
+        <activity
+            android:name=".TutorStudentsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".TutorEarningsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".AdminHomeActivity"
+            android:exported="true" />
+        <activity
+            android:name=".RegistrationActivity"
+            android:exported="true" />
+        <activity android:name=".TuitionFormActivity" />
     </application>
 
 </manifest>

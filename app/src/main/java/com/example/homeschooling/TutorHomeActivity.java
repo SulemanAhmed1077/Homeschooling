@@ -1,87 +1,149 @@
 package com.example.homeschooling;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class TutorHomeActivity extends AppCompatActivity {
 
-    BottomNavigationView bottomNav;
-    CardView cardMyStudents, cardMySchedule, cardEarnings;
+    private BottomNavigationView bottomNav;
+    private CardView cardMyStudents, cardEarnings, cardFindStudents, cardMySchedule;
+    private TextView tvUserName, tvUserRole, tvTutorStudents, tvTutorEarnings;
+    private ImageView btnLogout, btnNotification;
 
-    TextView tvUserName, tvUserRole;
-    ImageView btnLogout, btnNotification;
+    private DatabaseHelper dbHelper;
+    private int tutorId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tutor_home);
 
-        // Init Views
+        // 1. Initialize Database & Views
+        dbHelper = new DatabaseHelper(this);
+
         bottomNav = findViewById(R.id.bottom_nav);
         cardMyStudents = findViewById(R.id.cardMyStudents);
-        cardMySchedule = findViewById(R.id.cardMySchedule);
         cardEarnings = findViewById(R.id.cardEarnings);
+        cardFindStudents = findViewById(R.id.cardFindStudents);
+        cardMySchedule = findViewById(R.id.cardMySchedule); // Added if exists in XML
 
         tvUserName = findViewById(R.id.tvUserName);
         tvUserRole = findViewById(R.id.tvUserRole);
         btnLogout = findViewById(R.id.btnLogout);
         btnNotification = findViewById(R.id.btnNotification);
 
-        // --- 1. SET USER DATA ---
-        Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("USER_NAME")) {
-            String name = intent.getStringExtra("USER_NAME");
-            tvUserName.setText("Hello, " + name + "!");
-            tvUserRole.setText("Tutor"); // Tutor user hai
+        tvTutorStudents = findViewById(R.id.tvTutorStudents);
+        tvTutorEarnings = findViewById(R.id.tvTutorEarnings);
+
+        // 2. Get Tutor Info from Session
+        SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String userEmail = prefs.getString("USER_EMAIL", "");
+        String userName = prefs.getString("USER_NAME", "Tutor");
+
+        tvUserName.setText("Hello, " + userName + "!");
+        tvUserRole.setText("Tutor Dashboard");
+
+        // Fetch Tutor ID using the helper method
+        Cursor c = dbHelper.getUserByEmail(userEmail);
+        if (c != null && c.moveToFirst()) {
+            tutorId = c.getInt(c.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USER_ID));
+            c.close();
         }
 
-        // --- 2. BUTTON CLICKS ---
-        cardMyStudents.setOnClickListener(v -> showMessage("View My Students"));
-        cardMySchedule.setOnClickListener(v -> showMessage("View My Schedule"));
-        cardEarnings.setOnClickListener(v -> showMessage("View My Earnings"));
+        // 3. Button Click Listeners (Asli Logic)
 
-        btnNotification.setOnClickListener(v -> showMessage("Notifications (You have a new request)"));
+        // Find Students (Requests available for everyone)
+        cardFindStudents.setOnClickListener(v -> {
+            startActivity(new Intent(TutorHomeActivity.this, RequestsListActivity.class));
+        });
 
+        // My Students (Accepted only)
+        cardMyStudents.setOnClickListener(v -> {
+            startActivity(new Intent(TutorHomeActivity.this, TutorStudentsActivity.class));
+        });
+
+        // Earnings View
+        cardEarnings.setOnClickListener(v -> {
+            startActivity(new Intent(TutorHomeActivity.this, TutorEarningsActivity.class));
+        });
+
+        // Schedule (Optional feature)
+        if (cardMySchedule != null) {
+            cardMySchedule.setOnClickListener(v -> {
+                Toast.makeText(this, "Schedule feature coming soon!", Toast.LENGTH_SHORT).show();
+            });
+        }
+
+        // Notifications
+        btnNotification.setOnClickListener(v -> {
+            Toast.makeText(this, "No new notifications", Toast.LENGTH_SHORT).show();
+        });
+
+        // Logout Logic
         btnLogout.setOnClickListener(v -> {
+            prefs.edit().clear().apply();
+            Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
             Intent i = new Intent(TutorHomeActivity.this, LoginActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(i);
             finish();
         });
 
-        // --- 3. BOTTOM NAV LOGIC ---
+        // 4. Bottom Navigation Logic
+        bottomNav.setSelectedItemId(R.id.nav_home);
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
-
             if (id == R.id.nav_home) {
-                // Home
+                return true;
+            } else if (id == R.id.nav_tutors) {
+                startActivity(new Intent(this, RequestsListActivity.class));
+                return true;
+            } else if (id == R.id.nav_profile) {
+                startActivity(new Intent(this, ProfileActivity.class));
+                return true;
+            } else if (id == R.id.nav_attendance || id == R.id.nav_messages) {
+                Toast.makeText(this, "Feature coming soon!", Toast.LENGTH_SHORT).show();
+                return true;
             }
-            else if (id == R.id.nav_tutors) {
-                showMessage("Find Students clicked");
-            }
-            else if (id == R.id.nav_messages) {
-                showMessage("Messages clicked");
-            }
-            else if (id == R.id.nav_attendance) {
-                showMessage("Attendance clicked");
-            }
-            else if (id == R.id.nav_profile) {
-                // Profile Activity mein ja sakte hain
-                Intent i = new Intent(TutorHomeActivity.this, ProfileActivity.class);
-                startActivity(i);
-            }
-            return true;
+            return false;
         });
+
+        // Initial Stats Load
+        updateTutorStats();
     }
 
-    private void showMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    // Har baar screen par wapas aane par stats refresh honge
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateTutorStats();
+        if (bottomNav != null) {
+            bottomNav.setSelectedItemId(R.id.nav_home);
+        }
+    }
+
+    private void updateTutorStats() {
+        if (tutorId == -1) return;
+
+        // Use high-performance helper methods from DatabaseHelper
+        int studentCount = dbHelper.getTutorStudentCount(tutorId);
+        int totalEarnings = dbHelper.getTutorTotalEarnings(tutorId);
+
+        // UI Update
+        if (tvTutorStudents != null) {
+            tvTutorStudents.setText(String.valueOf(studentCount));
+        }
+
+        if (tvTutorEarnings != null) {
+            tvTutorEarnings.setText("PKR " + totalEarnings);
+        }
     }
 }

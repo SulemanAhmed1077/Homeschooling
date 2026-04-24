@@ -1,137 +1,160 @@
 package com.example.homeschooling;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 public class ParentHomeActivity extends AppCompatActivity {
 
-    BottomNavigationView bottomNav;
-    CardView cardRequests, cardAttendance, cardPayment;
-    CardView cardPostRequest; // Post Request wala card
+    private BottomNavigationView bottomNav;
+    private CardView cardRequests, cardAttendance, cardPayment, cardPostRequest, cardFindTutors;
+    private TextView tvUserName, tvUserRole, tvActiveTuitions, tvDaysAttended;
+    private ImageView btnLogout, btnNotification;
 
-    TextView tvUserName, tvUserRole;
-    ImageView btnLogout, btnNotification;
+    private DatabaseHelper dbHelper;
+    private int parentId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parent_home);
 
-        // --- IDs DHUNDEIN ---
+        // 1. Initialize Database & Views
+        dbHelper = new DatabaseHelper(this);
+
         bottomNav = findViewById(R.id.bottom_nav);
         cardRequests = findViewById(R.id.cardRequests);
         cardAttendance = findViewById(R.id.cardAttendance);
         cardPayment = findViewById(R.id.cardPayment);
-        cardPostRequest = findViewById(R.id.cardPostRequest); // Ye add kiya
+        cardPostRequest = findViewById(R.id.cardPostRequest);
+        cardFindTutors = findViewById(R.id.cardFindTutors);
 
         tvUserName = findViewById(R.id.tvUserName);
         tvUserRole = findViewById(R.id.tvUserRole);
         btnLogout = findViewById(R.id.btnLogout);
         btnNotification = findViewById(R.id.btnNotification);
 
-        // --- SET USER DATA ---
-        Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("USER_NAME")) {
-            String name = intent.getStringExtra("USER_NAME");
+        tvActiveTuitions = findViewById(R.id.tvActiveTuitions);
+        tvDaysAttended = findViewById(R.id.tvDaysAttended);
 
-            if (name != null && !name.isEmpty()) {
-                tvUserName.setText("Welcome, " + name);
-            } else {
-                tvUserName.setText("Welcome");
-            }
-            tvUserRole.setText("Parent Account");
+        // 2. Session Management & User Data
+        SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String userEmail = prefs.getString("USER_EMAIL", "");
+        String userName = prefs.getString("USER_NAME", "Parent");
+
+        tvUserName.setText("Welcome, " + userName);
+        tvUserRole.setText("Parent Account");
+
+        // Fetch Parent ID from Database
+        Cursor c = dbHelper.getUserByEmail(userEmail);
+        if (c != null && c.moveToFirst()) {
+            parentId = c.getInt(c.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USER_ID));
+            c.close();
         }
 
-        // --- CLICK LISTENERS ---
+        // 3. Button Click Listeners (Asli Logic)
 
-        // Post Request Button -> Form Kholega
-        cardPostRequest.setOnClickListener(v -> openTuitionForm());
+        // Post New Tuition Request
+        cardPostRequest.setOnClickListener(v -> {
+            startActivity(new Intent(ParentHomeActivity.this, TuitionFormActivity.class));
+        });
 
-        cardRequests.setOnClickListener(v -> showMessage("View Requests"));
-        cardAttendance.setOnClickListener(v -> showMessage("Mark Attendance"));
-        cardPayment.setOnClickListener(v -> showMessage("Payment"));
+        // Search/Find Tutors
+        cardFindTutors.setOnClickListener(v -> {
+            startActivity(new Intent(ParentHomeActivity.this, SearchTutorsActivity.class));
+        });
 
-        btnNotification.setOnClickListener(v -> showMessage("Notifications"));
+        // My Requests (Active Tuitions & Mark Attendance)
+        cardRequests.setOnClickListener(v -> {
+            startActivity(new Intent(ParentHomeActivity.this, ParentRequestsActivity.class));
+        });
 
+        // Attendance tracking shortcut (Seedha wahi screen khulegi)
+        cardAttendance.setOnClickListener(v -> {
+            startActivity(new Intent(ParentHomeActivity.this, ParentRequestsActivity.class));
+        });
+
+        // Payments & Escrow System
+        cardPayment.setOnClickListener(v -> {
+            startActivity(new Intent(ParentHomeActivity.this, PaymentActivity.class));
+        });
+
+        // Logout Logic
         btnLogout.setOnClickListener(v -> {
+            prefs.edit().clear().apply();
+            Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
             Intent i = new Intent(ParentHomeActivity.this, LoginActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(i);
             finish();
         });
 
+        // 4. Bottom Navigation Setup
+        bottomNav.setSelectedItemId(R.id.nav_home);
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_home) {
-                // Home
+                return true;
+            } else if (id == R.id.nav_tutors) {
+                startActivity(new Intent(this, SearchTutorsActivity.class));
+                return true;
+            } else if (id == R.id.nav_profile) {
+                startActivity(new Intent(this, ProfileActivity.class));
+                return true;
+            } else if (id == R.id.nav_attendance || id == R.id.nav_messages) {
+                Toast.makeText(this, "Messaging feature coming soon!", Toast.LENGTH_SHORT).show();
+                return true;
             }
-            else if (id == R.id.nav_tutors) {
-                showMessage("Find Tutors clicked");
-            }
-            else if (id == R.id.nav_messages) {
-                showMessage("Messages clicked");
-            }
-            else if (id == R.id.nav_attendance) {
-                showMessage("Attendance clicked");
-            }
-            else if (id == R.id.nav_profile) {
-                Intent i = new Intent(ParentHomeActivity.this, ProfileActivity.class);
-                startActivity(i);
-            }
-            return true;
+            return false;
         });
+
+        // Dashboard Stats Load
+        updateDashboardStats();
     }
 
-    // --- TUITION FORM OPEN KARNE KA METHOD ---
-    private void openTuitionForm() {
-        BottomSheetDialog bottomSheet = new BottomSheetDialog(ParentHomeActivity.this);
-
-        // Step 2 mein banayi gayi 'tuition_form.xml' load karo
-        View sheetView = LayoutInflater.from(ParentHomeActivity.this).inflate(R.layout.tuition_form, null);
-
-        bottomSheet.setContentView(sheetView);
-        bottomSheet.show();
-
-        // --- FORM KE ANDAR KE SARE FIELDS LAO ---
-        Button btnCreate = sheetView.findViewById(R.id.btnCreate);
-        EditText etName = sheetView.findViewById(R.id.etName);
-        EditText etClass = sheetView.findViewById(R.id.etClass);
-        EditText etSubjects = sheetView.findViewById(R.id.etSubjects);
-        EditText etTimings = sheetView.findViewById(R.id.etTimings); // Timings field connect kiya
-        EditText etFee = sheetView.findViewById(R.id.etFee);
-
-        // Create Button Par Click Logic
-        btnCreate.setOnClickListener(view -> {
-            // Data lo inputs se
-            String name = etName.getText().toString().trim();
-            String className = etClass.getText().toString().trim();
-            String subjects = etSubjects.getText().toString().trim();
-            String timings = etTimings.getText().toString().trim();
-            String fee = etFee.getText().toString().trim();
-
-            // Validation check (Sab bharna hai?)
-            if (name.isEmpty() || className.isEmpty() || subjects.isEmpty() || fee.isEmpty()) {
-                Toast.makeText(this, "Please fill all required fields", Toast.LENGTH_SHORT).show();
-            } else {
-                // Agar sab sahi hai to Message dikhao aur Band kar do
-                Toast.makeText(this, "Request Posted!\nFee: ₹" + fee, Toast.LENGTH_SHORT).show();
-                bottomSheet.dismiss();
-            }
-        });
+    // Har baar screen par wapas aane par stats refresh honge
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateDashboardStats();
+        if (bottomNav != null) {
+            bottomNav.setSelectedItemId(R.id.nav_home);
+        }
     }
 
-    private void showMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    private void updateDashboardStats() {
+        if (parentId == -1) return;
+
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        // 1. Count Active Tuitions (Accepted status)
+        Cursor activeCursor = db.rawQuery("SELECT COUNT(*) FROM " + DatabaseHelper.TABLE_TUITION_REQUESTS +
+                        " WHERE " + DatabaseHelper.COLUMN_REQ_PARENT_ID + "=? AND " + DatabaseHelper.COLUMN_REQ_STATUS + "='Accepted'",
+                new String[]{String.valueOf(parentId)});
+
+        if (activeCursor != null && activeCursor.moveToFirst()) {
+            tvActiveTuitions.setText(String.valueOf(activeCursor.getInt(0)));
+            activeCursor.close();
+        }
+
+        // 2. Count Total Present Days Across All Tuitions
+        String attendanceQuery = "SELECT COUNT(*) FROM " + DatabaseHelper.TABLE_ATTENDANCE + " a " +
+                " JOIN " + DatabaseHelper.TABLE_TUITION_REQUESTS + " r ON a.att_req_id = r." + DatabaseHelper.COLUMN_REQ_ID +
+                " WHERE r." + DatabaseHelper.COLUMN_REQ_PARENT_ID + "=? AND a.att_status='Present'";
+
+        Cursor attCursor = db.rawQuery(attendanceQuery, new String[]{String.valueOf(parentId)});
+
+        if (attCursor != null && attCursor.moveToFirst()) {
+            tvDaysAttended.setText(String.valueOf(attCursor.getInt(0)));
+            attCursor.close();
+        }
     }
 }

@@ -1,176 +1,248 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F4F7FB">
 
-    <LinearLayout
+    <View
+        android:id="@+id/headerBg"
         android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:background="#2D3436"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvHeaderTitle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#FFFFFF"
-        android:padding="24dp">
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="48dp"
+        android:text="Post Tuition Request"
+        android:textColor="#FFFFFF"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Top Handle -->
-        <View
-            android:layout_width="50dp"
-            android:layout_height="5dp"
-            android:background="#DDDDDD"
-            android:layout_gravity="center"
-            android:layout_marginBottom="20dp"/>
+    <TextView
+        android:id="@+id/tvHeaderSub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="Find the perfect tutor for your child"
+        android:textColor="#B0BEC5"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="@id/tvHeaderTitle"
+        app:layout_constraintTop_toBottomOf="@id/tvHeaderTitle" />
 
-        <!-- Title -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tuition Details"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="#000000"
-            android:layout_marginBottom="20dp"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingBottom="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvHeaderSub"
+        android:layout_marginTop="24dp">
 
-        <!-- 1. Child's Name -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Child's Name *"
-            android:textColor="#555555"
-            android:textSize="14sp"
-            android:layout_marginBottom="5dp"/>
-
-        <EditText
-            android:id="@+id/etName"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="#F0F2F5"
-            android:paddingLeft="15dp"
-            android:hint="Enter child's name"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            android:layout_marginBottom="15dp"/>
-
-        <!-- 2. Class/Grade -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Class/Grade *"
-            android:textColor="#555555"
-            android:textSize="14sp"
-            android:layout_marginBottom="5dp"/>
-
-        <EditText
-            android:id="@+id/etClass"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="#F0F2F5"
-            android:paddingLeft="15dp"
-            android:hint="e.g. 10th Grade"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            android:layout_marginBottom="15dp"/>
-
-        <!-- 3. Subjects Needed -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Subjects Needed *"
-            android:textColor="#555555"
-            android:textSize="14sp"
-            android:layout_marginBottom="5dp"/>
-
-        <EditText
-            android:id="@+id/etSubjects"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="#F0F2F5"
-            android:paddingLeft="15dp"
-            android:hint="e.g. Maths, Physics"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            android:layout_marginBottom="15dp"/>
-
-        <!-- 4. Preferred Timings -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Preferred Timings"
-            android:textColor="#555555"
-            android:textSize="14sp"
-            android:layout_marginBottom="5dp"/>
-
-        <EditText
-            android:id="@+id/etTimings"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="#F0F2F5"
-            android:paddingLeft="15dp"
-            android:hint="e.g. After 5 PM"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            android:layout_marginBottom="15dp"/>
-
-        <!-- 5. Monthly Fee -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Monthly Fee (PKR) *"
-            android:textColor="#555555"
-            android:textSize="14sp"
-            android:layout_marginBottom="5dp"/>
-
-        <EditText
-            android:id="@+id/etFee"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="#F0F2F5"
-            android:paddingLeft="15dp"
-            android:hint="0"
-            android:inputType="number"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            android:layout_marginBottom="15dp"/>
-
-        <!-- 6. Days per Month (NEW) -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Days per Month *"
-            android:textColor="#555555"
-            android:textSize="14sp"
-            android:layout_marginBottom="5dp"/>
-
-        <EditText
-            android:id="@+id/etDays"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="#F0F2F5"
-            android:paddingLeft="15dp"
-            android:hint="e.g. 23"
-            android:inputType="number"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            android:layout_marginBottom="10dp"/>
-
-        <!-- 7. About Days & Payment Text -->
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="About Days &amp; Payment:\nPayment is calculated based on the selected days per month. Any changes will be reflected in the escrow."
-            android:textColor="#999999"
-            android:textSize="11sp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="25dp"
-            android:lineSpacingExtra="2dp"/>
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp">
 
-        <!-- 8. Create Request Button -->
-        <Button
-            android:id="@+id/btnCreate"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:text="Create Request"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:backgroundTint="#1565C0"/>
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="12dp"
+                app:strokeWidth="0dp">
 
-    </LinearLayout>
-</ScrollView>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tuition Details"
+                        android:textColor="#2D3436"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="20dp"
+                        android:drawableStart="@android:drawable/ic_menu_edit"
+                        android:drawablePadding="12dp" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:hint="Child's Name"
+                        app:boxCornerRadiusBottomEnd="16dp"
+                        app:boxCornerRadiusBottomStart="16dp"
+                        app:boxCornerRadiusTopEnd="16dp"
+                        app:boxCornerRadiusTopStart="16dp"
+                        app:boxStrokeColor="#2D3436"
+                        app:startIconDrawable="@android:drawable/ic_menu_myplaces"
+                        app:startIconTint="#636E72">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPersonName" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:hint="Class / Grade"
+                        app:boxCornerRadiusBottomEnd="16dp"
+                        app:boxCornerRadiusBottomStart="16dp"
+                        app:boxCornerRadiusTopEnd="16dp"
+                        app:boxCornerRadiusTopStart="16dp"
+                        app:boxStrokeColor="#2D3436"
+                        app:startIconDrawable="@android:drawable/ic_menu_sort_by_size"
+                        app:startIconTint="#636E72">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etClass"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:hint="Subjects Needed"
+                        app:boxCornerRadiusBottomEnd="16dp"
+                        app:boxCornerRadiusBottomStart="16dp"
+                        app:boxCornerRadiusTopEnd="16dp"
+                        app:boxCornerRadiusTopStart="16dp"
+                        app:boxStrokeColor="#2D3436"
+                        app:startIconDrawable="@android:drawable/ic_menu_agenda"
+                        app:startIconTint="#636E72">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etSubjects"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="#EEEEEE" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Payment &amp; Escrow Details"
+                        android:textColor="#2D3436"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="16dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:hint="Total Fee (PKR)"
+                            app:boxCornerRadiusBottomEnd="16dp"
+                            app:boxCornerRadiusBottomStart="16dp"
+                            app:boxCornerRadiusTopEnd="16dp"
+                            app:boxCornerRadiusTopStart="16dp"
+                            app:boxStrokeColor="#1565C0"
+                            app:startIconDrawable="@android:drawable/ic_menu_info_details"
+                            app:startIconTint="#1565C0">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etFee"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="number"
+                                android:textColor="#1565C0"
+                                android:textStyle="bold" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:hint="Days / Month"
+                            app:boxCornerRadiusBottomEnd="16dp"
+                            app:boxCornerRadiusBottomStart="16dp"
+                            app:boxCornerRadiusTopEnd="16dp"
+                            app:boxCornerRadiusTopStart="16dp"
+                            app:boxStrokeColor="#E65100"
+                            app:startIconDrawable="@android:drawable/ic_menu_today"
+                            app:startIconTint="#E65100">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etDays"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="number"
+                                android:text="23"
+                                android:textColor="#E65100"
+                                android:textStyle="bold" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="#E3F2FD"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="16dp"
+                    android:text="🔒 Escrow System Active: Daily fee is calculated automatically. Tutors are paid only for the days they attend."
+                    android:textColor="#1565C0"
+                    android:textSize="12sp" />
+            </androidx.cardview.widget.CardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCreate"
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:text="Post Request Now"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:backgroundTint="#4CAF50"
+                app:cornerRadius="16dp"
+                app:icon="@android:drawable/ic_menu_send"
+                app:iconGravity="textStart"
+                app:iconSize="24dp"
+                app:iconTint="#FFFFFF" />
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
